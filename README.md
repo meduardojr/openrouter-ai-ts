@@ -11,7 +11,7 @@ npm run dev
 
 ## Environment Setup
 
-Copy `.env.example` to `.env` and add your OpenRouter API key:
+Create a `.env` file in the project root:
 
 ```env
 VITE_OPENROUTER_API_KEY=your_key_here
