@@ -17,6 +17,8 @@ export async function chatWithOpenRouter(
     headers: {
       Authorization: `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
+      'HTTP-Referer': 'https://openrouter.ai',
+      'X-Title': 'AI LLM Library',
     },
     body: JSON.stringify({
       model,

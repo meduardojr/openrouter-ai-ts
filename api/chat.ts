@@ -1,15 +1,21 @@
 import { chatWithOpenRouter, DEFAULT_MODEL } from '../src/lib/ai';
 
-export const config = { runtime: 'edge' };
+function getApiKey(): string | undefined {
+  // Dynamic access so Vercel does not inline a missing value at build time
+  return process.env['OPENROUTER_API_KEY']?.trim();
+}
 
 export default async function handler(request: Request) {
   if (request.method !== 'POST') {
     return Response.json({ error: 'Method not allowed' }, { status: 405 });
   }
 
-  const apiKey = process.env.OPENROUTER_API_KEY;
+  const apiKey = getApiKey();
   if (!apiKey) {
-    return Response.json({ error: 'OPENROUTER_API_KEY not configured' }, { status: 500 });
+    return Response.json(
+      { error: 'OPENROUTER_API_KEY is not set in Vercel environment variables' },
+      { status: 500 },
+    );
   }
 
   let body: { prompt?: string; model?: string };
