@@ -43,13 +43,13 @@ Check on Vercel: `https://your-app.vercel.app/api/chat` → `{"configured":true,
 3. Set `OPENROUTER_API_KEY` in environment variables.
 4. Deploy.
 
-The API key stays server-side in `api/chat.cjs` — never exposed to the browser.
+The API key stays server-side in `api/chat.js` — never exposed to the browser.
 
 ## Project Structure
 
 ```
 api/
-└── chat.cjs        # Vercel serverless API (production)
+└── chat.js         # Vercel serverless API (production)
 lib/
 └── openrouter.cjs  # Shared API logic (local + Vercel)
 src/
