@@ -1,44 +1,29 @@
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { chatWithOpenRouter, DEFAULT_MODEL } from '../src/lib/ai';
 
-function getApiKey(): string | undefined {
-  // Dynamic access so Vercel does not inline a missing value at build time
-  return process.env['OPENROUTER_API_KEY']?.trim();
-}
-
-export default async function handler(request: Request) {
-  if (request.method !== 'POST') {
-    return Response.json({ error: 'Method not allowed' }, { status: 405 });
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const apiKey = getApiKey();
+  const apiKey = process.env['OPENROUTER_API_KEY']?.trim();
   if (!apiKey) {
-    return Response.json(
-      { error: 'OPENROUTER_API_KEY is not set in Vercel environment variables' },
-      { status: 500 },
-    );
+    return res.status(500).json({
+      error: 'OPENROUTER_API_KEY is not set in Vercel environment variables',
+    });
   }
 
-  let body: { prompt?: string; model?: string };
-  try {
-    body = (await request.json()) as { prompt?: string; model?: string };
-  } catch {
-    return Response.json({ error: 'Invalid JSON body' }, { status: 400 });
-  }
-
-  const prompt = body.prompt?.trim();
-  if (!prompt) {
-    return Response.json({ error: 'Prompt is required' }, { status: 400 });
+  const { prompt, model } = req.body as { prompt?: string; model?: string };
+  const trimmed = prompt?.trim();
+  if (!trimmed) {
+    return res.status(400).json({ error: 'Prompt is required' });
   }
 
   try {
-    const text = await chatWithOpenRouter(
-      apiKey,
-      prompt,
-      body.model ?? DEFAULT_MODEL,
-    );
-    return Response.json({ text });
+    const text = await chatWithOpenRouter(apiKey, trimmed, model ?? DEFAULT_MODEL);
+    return res.status(200).json({ text });
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error';
-    return Response.json({ error: message }, { status: 500 });
+    return res.status(500).json({ error: message });
   }
 }

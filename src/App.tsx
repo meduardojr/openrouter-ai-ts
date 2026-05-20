@@ -7,7 +7,14 @@ async function sendChat(prompt: string): Promise<string> {
     body: JSON.stringify({ prompt }),
   });
 
-  const data = (await res.json()) as { text?: string; error?: string };
+  const raw = await res.text();
+  let data: { text?: string; error?: string };
+  try {
+    data = JSON.parse(raw) as { text?: string; error?: string };
+  } catch {
+    throw new Error(raw.slice(0, 200) || `Request failed (${res.status})`);
+  }
+
   if (!res.ok) throw new Error(data.error ?? 'Request failed');
   if (!data.text) throw new Error('Empty response');
   return data.text;
