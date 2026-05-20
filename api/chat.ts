@@ -14,7 +14,7 @@ export default async function handler(request: Request) {
 
   let body: { prompt?: string; model?: string };
   try {
-    body = await request.json();
+    body = (await request.json()) as { prompt?: string; model?: string };
   } catch {
     return Response.json({ error: 'Invalid JSON body' }, { status: 400 });
   }

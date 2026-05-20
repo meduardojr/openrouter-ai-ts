@@ -1,6 +1,6 @@
 # AI LLM Library
 
-A lightweight TypeScript library for LLM chat via [OpenRouter](https://openrouter.ai/), with a minimal Vite demo app.
+A lightweight TypeScript app for LLM chat via [OpenRouter](https://openrouter.ai/), built with Vite and deployed on Vercel.
 
 ## Setup
 
@@ -9,86 +9,45 @@ npm install
 npm run dev
 ```
 
-## Environment Setup
+`npm run dev` runs [Vercel Dev](https://vercel.com/docs/cli/dev), which serves the Vite app and the `/api/chat` Edge Function together.
 
-Create a `.env` file in the project root:
+## Environment
+
+Use one variable everywhere (local `.env` and Vercel project settings):
 
 ```env
-VITE_OPENROUTER_API_KEY=your_key_here
+OPENROUTER_API_KEY=your_key_here
 ```
 
 Get a key at [openrouter.ai/keys](https://openrouter.ai/keys).
 
-## Usage Example
-
-```ts
-import { createAIClient } from './lib/ai';
-
-const ai = createAIClient({
-  apiKey: 'YOUR_KEY',
-});
-
-const response = await ai.chat('Explain TypeScript simply');
-console.log(response);
-```
-
-### Custom model
-
-Browse models at [openrouter.ai/models](https://openrouter.ai/models), then pass the model id:
-
-```ts
-const ai = createAIClient({
-  apiKey: 'YOUR_KEY',
-  model: 'anthropic/claude-sonnet-4',
-});
-```
+On Vercel: **Project → Settings → Environment Variables** → add `OPENROUTER_API_KEY`.
 
 ## Deploy to Vercel
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/YOUR_USER/ai-llm-library)
+1. Push to GitHub.
+2. Import at [vercel.com/new](https://vercel.com/new) (Vite is auto-detected).
+3. Set `OPENROUTER_API_KEY` in environment variables.
+4. Deploy.
 
-1. Push this repo to GitHub.
-2. Import the project on [vercel.com/new](https://vercel.com/new).
-3. Vercel auto-detects **Vite** (`vercel.json` is included).
-4. Add an environment variable:
-
-   | Name | Value |
-   | --- | --- |
-   | `OPENROUTER_API_KEY` | Your [OpenRouter](https://openrouter.ai/keys) key |
-
-5. Deploy.
-
-Production calls `/api/chat` (Edge Function) so your API key stays on the server. Local dev still uses `VITE_OPENROUTER_API_KEY` directly.
-
-### Test production locally
-
-```bash
-npx vercel dev
-```
+The API key stays server-side in `api/chat.ts` — it is never sent to the browser.
 
 ## Project Structure
 
 ```
 api/
-└── chat.ts         # Vercel Edge API (production)
+└── chat.ts         # Vercel Edge API
 src/
 ├── lib/
-│   ├── ai.ts       # Reusable AI client
-│   └── chatApi.ts  # Dev vs production routing
-├── App.tsx         # Demo UI
+│   └── ai.ts       # OpenRouter request helper
+├── App.tsx
 ├── main.tsx
 └── styles.css
-vercel.json
 ```
 
 ## Scripts
 
-| Command           | Description              |
-| ----------------- | ------------------------ |
-| `npm run dev`     | Start dev server         |
-| `npm run build`   | Type-check and build     |
-| `npm run preview` | Preview production build |
-
-## License
-
-MIT
+| Command         | Description                          |
+| --------------- | ------------------------------------ |
+| `npm run dev`   | Local dev (Vite + API via Vercel CLI) |
+| `npm run build` | Type-check and production build      |

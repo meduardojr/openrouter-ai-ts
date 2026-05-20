@@ -2,15 +2,6 @@ const OPENROUTER_API = 'https://openrouter.ai/api/v1/chat/completions';
 
 export const DEFAULT_MODEL = 'openai/gpt-4o-mini';
 
-export type AIClientConfig = {
-  apiKey: string;
-  model?: string;
-};
-
-export type AIClient = {
-  chat: (prompt: string) => Promise<string>;
-};
-
 type ChatResponse = {
   choices?: { message?: { content?: string } }[];
   error?: { message?: string };
@@ -42,19 +33,4 @@ export async function chatWithOpenRouter(
   const text = data.choices?.[0]?.message?.content;
   if (!text) throw new Error('Empty response from model');
   return text;
-}
-
-export function createAIClient(config: AIClientConfig): AIClient {
-  const model = config.model ?? DEFAULT_MODEL;
-
-  return {
-    async chat(prompt: string): Promise<string> {
-      try {
-        return await chatWithOpenRouter(config.apiKey, prompt, model);
-      } catch (err) {
-        const message = err instanceof Error ? err.message : 'Unknown error';
-        throw new Error(`AI request failed: ${message}`);
-      }
-    },
-  };
 }

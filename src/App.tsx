@@ -1,5 +1,17 @@
 import { useState } from 'react';
-import { sendChat } from './lib/chatApi';
+
+async function sendChat(prompt: string): Promise<string> {
+  const res = await fetch('/api/chat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prompt }),
+  });
+
+  const data = (await res.json()) as { text?: string; error?: string };
+  if (!res.ok) throw new Error(data.error ?? 'Request failed');
+  if (!data.text) throw new Error('Empty response');
+  return data.text;
+}
 
 export default function App() {
   const [prompt, setPrompt] = useState('');
