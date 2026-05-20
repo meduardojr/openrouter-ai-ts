@@ -115,26 +115,6 @@ button:disabled {
   color: #b91c1c;
 }
 
-.output.debug {
-  border-color: #fcd34d;
-  background: #fffbeb;
-}
-
-.output.debug pre {
-  margin: 0.25rem 0 0.75rem;
-  padding: 0.5rem;
-  background: #fff;
-  border-radius: 6px;
-  font-size: 0.75rem;
-  word-break: break-all;
-  white-space: pre-wrap;
-}
-
-.error-text {
-  color: #b91c1c;
-  margin: 0;
-}
-
 @media (max-width: 480px) {
   .app {
     padding: 1.5rem 1rem;
