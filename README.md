@@ -6,40 +6,54 @@ A lightweight TypeScript app for LLM chat via [OpenRouter](https://openrouter.ai
 
 ```bash
 npm install
-npm run dev
 ```
 
-`npm run dev` runs [Vercel Dev](https://vercel.com/docs/cli/dev), which serves the Vite app and the `/api/chat` Edge Function together.
-
-## Environment
-
-Use one variable everywhere (local `.env` and Vercel project settings):
+Create a `.env` file:
 
 ```env
 OPENROUTER_API_KEY=your_key_here
 ```
 
+```bash
+npm run dev
+```
+
+Opens **http://localhost:5173** with the Vite app and a local `/api/chat` server (same logic as production).
+
+Check the key locally: **http://localhost:5173/api/chat**
+
+## Environment
+
+Use one variable everywhere (local `.env` and Vercel):
+
+| Variable | Where |
+| --- | --- |
+| `OPENROUTER_API_KEY` | `.env` (local) and Vercel project settings (production) |
+
 Get a key at [openrouter.ai/keys](https://openrouter.ai/keys).
 
-On Vercel: **Project → Settings → Environment Variables** → add `OPENROUTER_API_KEY`.
+On Vercel: **Settings → Environment Variables** → add `OPENROUTER_API_KEY` (no quotes). Enable for **Production** and **Preview**, then **redeploy**.
+
+Check on Vercel: `https://your-app.vercel.app/api/chat` → `{"configured":true,...}`
 
 ## Deploy to Vercel
 
 1. Push to GitHub.
-2. Import at [vercel.com/new](https://vercel.com/new) (Vite is auto-detected).
+2. Import at [vercel.com/new](https://vercel.com/new).
 3. Set `OPENROUTER_API_KEY` in environment variables.
 4. Deploy.
 
-The API key stays server-side in `api/chat.ts` — it is never sent to the browser.
+The API key stays server-side in `api/chat.cjs` — never exposed to the browser.
 
 ## Project Structure
 
 ```
 api/
-└── chat.ts         # Vercel Edge API
+└── chat.cjs        # Vercel serverless API (production)
+lib/
+└── openrouter.cjs  # Shared API logic (local + Vercel)
 src/
-├── lib/
-│   └── ai.ts       # OpenRouter request helper
+├── lib/ai.ts       # Optional copy-paste helper
 ├── App.tsx
 ├── main.tsx
 └── styles.css
@@ -47,7 +61,7 @@ src/
 
 ## Scripts
 
-| Command         | Description                          |
-| --------------- | ------------------------------------ |
-| `npm run dev`   | Local dev (Vite + API via Vercel CLI) |
-| `npm run build` | Type-check and production build      |
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Local Vite dev server + `/api/chat` |
+| `npm run build` | Type-check and production build |
